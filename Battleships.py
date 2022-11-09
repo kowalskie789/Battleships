@@ -22,12 +22,6 @@ def display_one_board(board):
     for row in board:
         print(f'{rows[count][0]} {row[0]} {row[1]} {row[2]} {row[3]} {row[4]}')
         count += 1
-def placement_ships_of_one_kind(ship, user_inputs, placements, board):
-    count = 0
-    for placement in placements:
-        board = placement_ship(ship, user_inputs[count], placement, board)
-        count += 1
-    return board
 def placement_ship(ship, user_input, placement, board):
     distance = 0
     if placement == 'vertical':
@@ -103,36 +97,38 @@ def ask_for_coordinates_input():
         else:
             coordinators = []
             print('Incorrect value - try again.')
-print(are_there_ships_already(big_ship, [0, 1], 'vertical', empty_board))
-print(are_there_ships_already(big_ship, [0, 2], 'vertical', empty_board))
-print(are_there_ships_already(big_ship, [0, 3], 'vertical', empty_board))
-print(are_there_ships_already(big_ship, [0, 4], 'vertical', empty_board))
-print(are_there_ships_already(big_ship, [0, 0], 'vertical', empty_board))
-print(are_there_ships_already(big_ship, [0, 0], 'horizontal', empty_board))
-print(are_there_ships_already(big_ship, [1, 0], 'horizontal', empty_board))
-print(are_there_ships_already(big_ship, [2, 0], 'horizontal', empty_board))
-print(are_there_ships_already(big_ship, [3, 0], 'horizontal', empty_board))
-print(are_there_ships_already(big_ship, [4, 0], 'horizontal', empty_board))
-placement_ship(big_ship, [0, 0], 'vertical', empty_board)
-placement_ship(big_ship, [0, 1], 'vertical', empty_board)
-placement_ship(big_ship, [0, 2], 'vertical', empty_board)
-placement_ship(big_ship, [0, 3], 'vertical', empty_board)
-placement_ship(big_ship, [0, 4], 'vertical', empty_board)
-placement_ship(big_ship, [0, 0], 'horizontal', empty_board)
-placement_ship(big_ship, [1, 0], 'horizontal', empty_board)
-placement_ship(big_ship, [2, 0], 'horizontal', empty_board)
-placement_ship(big_ship, [3, 0], 'horizontal', empty_board)
-placement_ship(big_ship, [4, 0], 'horizontal', empty_board)
-print(are_there_ships_already(big_ship, [0, 1], 'vertical', empty_board))
-print(are_there_ships_already(big_ship, [0, 2], 'vertical', empty_board))
-print(are_there_ships_already(big_ship, [0, 3], 'vertical', empty_board))
-print(are_there_ships_already(big_ship, [0, 4], 'vertical', empty_board))
-print(are_there_ships_already(big_ship, [0, 0], 'vertical', empty_board))
-print(are_there_ships_already(big_ship, [0, 0], 'horizontal', empty_board))
-print(are_there_ships_already(big_ship, [1, 0], 'horizontal', empty_board))
-print(are_there_ships_already(big_ship, [2, 0], 'horizontal', empty_board))
-print(are_there_ships_already(big_ship, [3, 0], 'horizontal', empty_board))
-print(are_there_ships_already(big_ship, [4, 0], 'horizontal', empty_board))
+def ask_for_placement_input():
+    while True:
+        user_input = input('Would you like your ship to be placed vertically or horizontally?\n[1] Vertically\n[2] Horizontally\n')
+        match user_input:
+            case '1':
+                return 'vertical'
+            case '2':
+                return 'horizontal'
+            case _:
+                print('Incorrect input. Try again')
+def placement_ships_of_one_kind(board, ship, number, kind_name):
+    for count in range(number):
+        print(f'{kind_name} {count+1} of {number}')
+        variable_for_while = True
+        while variable_for_while:
+            display_one_board(board)
+            coordinates = ask_for_coordinates_input()
+            placement = ask_for_placement_input()
+            if is_possible(ship, coordinates, placement, board):
+                if are_there_ships_already(ship, coordinates, placement, board):
+                    board = placement_ship(ship, coordinates, placement, board)
+                    variable_for_while = False
+                else:
+                    print('Some ships are already there')
+            else:
+                print('The ship is too large to fit')
+def player_placement(board):
+    kinds_and_numbers = [(big_ship, 1, 'three-masted ship'), (medium_ship, 2, 'two-masted ship'), (small_ship, 3, 'one-masted ship')]
+    for kind in kinds_and_numbers:
+        board = placement_ships_of_one_kind(board, kind[0], kind[1], kind[2])
+    return board
+player_placement(empty_board)
 
 
 
