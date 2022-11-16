@@ -86,12 +86,13 @@ def ask_for_coordinates_input():
     coordinators = []
     while True:
         user_input = input('Enter coordinators (A1 - E5): ')
-        for tuple in rows:
-            if user_input[0] == tuple[0]:
-                coordinators.append(tuple[1])
-        for tuple in columns:
-            if user_input[1] == tuple[0]:
-                coordinators.append(tuple[1])
+        if len(user_input) == 2:
+            for tuple in rows:
+                if user_input[0] == tuple[0]:
+                    coordinators.append(tuple[1])
+            for tuple in columns:
+                if user_input[1] == tuple[0]:
+                    coordinators.append(tuple[1])
         if len(coordinators)>1:
             return coordinators
         else:
@@ -111,11 +112,15 @@ def placement_ships_of_one_kind(board, ship, number, kind_name):
     new_board = board
     for count in range(number):
         print(f'{kind_name} {count+1} of {number}')
+        input()
         variable_for_while = True
         while variable_for_while:
             display_one_board(new_board)
             coordinates = ask_for_coordinates_input()
-            placement = ask_for_placement_input()
+            if len(ship) > 1:
+                placement = ask_for_placement_input()
+            else:
+                placement = 'vertical'
             if is_possible(ship, coordinates, placement, new_board):
                 if are_there_ships_already(ship, coordinates, placement, new_board):
                     new_board = placement_ship(ship, coordinates, placement, new_board)
@@ -127,11 +132,13 @@ def placement_ships_of_one_kind(board, ship, number, kind_name):
     return new_board
 def player_placement(board, name):
     print(f'{name}, your turn to place ships on a board.')
+    input()
     kinds_and_numbers = [(big_ship, 1, 'three-masted ship'), (medium_ship, 2, 'two-masted ship'), (small_ship, 3, 'one-masted ship')]
     for kind in kinds_and_numbers:
         board = placement_ships_of_one_kind(board, kind[0], kind[1], kind[2])
     return board
 def display_two_boards(board_1, board_2):
+    print('Your ships  | Enemy ships')
     print('  1 2 3 4 5 |   1 2 3 4 5')
     count = 0
     for row in board_1:
@@ -144,15 +151,49 @@ def move_is_succesfull(placement_board, user_input):
         return False
 def hit_or_miss(placement_board, displayed_board, user_input):
     if move_is_succesfull(placement_board, user_input):
-        displayed_board[user_input[0]][user_input[1]] == 'H'
-        print('Hit')
+        if placement_board[user_input[0]][user_input[1]] == 'X':
+            if_sunk_list = []
+            if user_input[0]-1 >= 0:
+                if_sunk_list.append(placement_board[user_input[0]-1][user_input[1]])
+            if user_input[0]+1 < len(placement_board):
+                if_sunk_list.append(placement_board[user_input[0]+1][user_input[1]])
+            if user_input[1]-1 >= 0:
+                if_sunk_list.append(placement_board[user_input[0]][user_input[1]-1])
+            if user_input[1]+1 < len(placement_board):
+                if_sunk_list.append(placement_board[user_input[0]][user_input[1]+1])            
+            if 'X' not in if_sunk_list:
+                displayed_board[user_input[0]][user_input[1]] = 'S'
+                if user_input[0]-1 >= 0:
+                    if placement_board[user_input[0]-1][user_input[1]] == 'H':
+                        displayed_board[user_input[0]-1][user_input[1]] = 'S'
+                        if user_input[0]-2 >= 0:
+                            displayed_board[user_input[0]-2][user_input[1]] = 'S'
+                if user_input[0]+1 < len(placement_board):
+                    if placement_board[user_input[0]+1][user_input[1]] == 'H':
+                        displayed_board[user_input[0]+1][user_input[1]] = 'S'
+                        if user_input[0]+2 < len(placement_board):
+                            displayed_board[user_input[0]+2][user_input[1]] = 'S'
+                if user_input[1]-1 >= 0:
+                    if placement_board[user_input[0]][user_input[1]-1] == 'H':
+                        displayed_board[user_input[0]][user_input[1]-1] = 'S'
+                        if user_input[1]-2 >= 0:
+                            displayed_board[user_input[0]][user_input[1]-2] = 'S'
+                if user_input[1]+1 < len(placement_board):
+                    if placement_board[user_input[0]][user_input[1]+1] == 'H':
+                        displayed_board[user_input[0]][user_input[1]+1] = 'S'
+                        if user_input[1]+2 < len(placement_board):
+                            displayed_board[user_input[0]][user_input[1]+2] = 'S'
+                print('Hit and sunk!')
+            else:
+                displayed_board[user_input[0]][user_input[1]] = 'H'
+                print('Hit')
     else:
-        displayed_board[user_input[0]][user_input[1]] == 'M'
+        displayed_board[user_input[0]][user_input[1]] = 'M'
         print('Missed')
     return displayed_board
 def change_placement_board(placement_board, user_input):
     if move_is_succesfull(placement_board, user_input):
-        placement_board[user_input[0]][user_input[1]] == 'H'
+        placement_board[user_input[0]][user_input[1]] = 'H'
     return placement_board
 def ask_for_coordinates_in_game_input(displayed_board):
     while True:
@@ -171,25 +212,71 @@ def turn(displayed_board_1, displayed_board_2, placement_board):
     while True:
         coordinators = ask_for_coordinates_in_game_input(displayed_board_2)
         if was_not_already_used(coordinators, displayed_board_2):
+            displayed_board_2 = hit_or_miss(placement_board, displayed_board_2, coordinators)
+            placement_board = change_placement_board(placement_board, coordinators)
             break
-    displayed_board_2 = hit_or_miss(placement_board, displayed_board_2, coordinators)
-    placement_board = change_placement_board(placement_board, coordinators)
-    
-player_1_name = player_name_input()
-player_2_name = player_name_input()
-player_1_board = empty_board()
-player_2_board = empty_board()
-player_1_board = player_placement(player_1_board, player_1_name)
-player_2_board = player_placement(player_2_board, player_2_name)
-placement_boards = [player_1_board, player_2_board]
+def check_win(placement_boards):
+    rows_without_x_1 = 0
+    rows_without_x_2 = 0
+    for any_row in placement_boards[0]:
+        if 'X' not in any_row:
+            rows_without_x_1 += 1
+    for any_row in placement_boards[1]:
+       if 'X' not in any_row:
+            rows_without_x_2 += 1
+    if rows_without_x_1 == 5:
+        return 1
+    elif rows_without_x_2 == 5:
+        return 0
+    else:
+        return None 
+def game(placement_boards, display_boards, names):
+    player = 0
+    winning_player = None
+    while winning_player == None:
+        if player == 0:
+            print(f'{names[0]}\'s turn')
+            input()
+            turn(display_boards[0], display_boards[1], placement_boards[1])
+            player = 1
+        else:
+            print(f'{names[1]}\'s turn')
+            input()
+            turn(display_boards[1], display_boards[0], placement_boards[0])
+            player = 0
+        winning_player = check_win(placement_boards)
+    print(f'{names[winning_player]} wins the game!')
+def settings():
+    placement_boards = []
+    display_boards = []
+    names = []
+    for number in range(2):
+        print(f'Player {number} of 2')
+        input()
+        name = player_name_input()
+        names.append(name)
+        display_board = empty_board()
+        display_boards.append(display_board)
+        board = empty_board()
+        board = player_placement(board, name)
+        placement_boards.append(board)
+    setting_list = [placement_boards, display_boards, names]
+    return setting_list
+def menu(game_settings):
+    while True:
+        menu_input = input('[1] Play\n[2] Change settings\n[3] Quit\n')
+        match menu_input:
+            case '1':
+                game(game_settings[0], game_settings[1], game_settings[2])
+            case '2':
+                game_settings = settings()
+            case '3':
+                break
+            case _:
+                print('Incorrect input')
 
-# H - hit, S - hit and sunk, M - missed
-
-board_for_display_1 = empty_board()
-board_for_display_2 = empty_board()
-display_boards = [board_for_display_1, board_for_display_2]
-
-display_two_boards(board_for_display_1, board_for_display_2)
+game_settings = settings()
+menu(game_settings)
 
 
 
