@@ -1,4 +1,8 @@
-import random
+columns = [('1', 0), ('2', 1), ('3', 2), ('4', 3), ('5', 4)]
+rows = [('A', 0), ('B', 1), ('C', 2), ('D', 3),('E', 4)]
+big_ship = ['X', 'X', 'X']
+medium_ship = ['X', 'X']
+small_ship = ['X']
 def empty_board():
     empty_board = [
         ['0', '0', '0', '0', '0'],
@@ -8,12 +12,6 @@ def empty_board():
         ['0', '0', '0', '0', '0'],
     ]
     return empty_board
-columns = [('1', 0), ('2', 1), ('3', 2), ('4', 3), ('5', 4)]
-rows = [('A', 0), ('B', 1), ('C', 2), ('D', 3),('E', 4)]
-#1 3-m, 2 2-m, 3 1-m
-big_ship = ['X', 'X', 'X']
-medium_ship = ['X', 'X']
-small_ship = ['X']
 def player_name_input():
     return input('Enter your name: ')
 def display_one_board(board):
@@ -111,8 +109,7 @@ def ask_for_placement_input():
 def placement_ships_of_one_kind(board, ship, number, kind_name):
     new_board = board
     for count in range(number):
-        print(f'{kind_name} {count+1} of {number}')
-        input()
+        print(f'\n{kind_name} {count+1} of {number}\n')
         variable_for_while = True
         while variable_for_while:
             display_one_board(new_board)
@@ -131,7 +128,7 @@ def placement_ships_of_one_kind(board, ship, number, kind_name):
                 print('The ship is too large to fit')
     return new_board
 def player_placement(board, name):
-    print(f'{name}, your turn to place ships on a board.')
+    print(f'\n{name}, your turn to place ships on a board.')
     input()
     kinds_and_numbers = [(big_ship, 1, 'three-masted ship'), (medium_ship, 2, 'two-masted ship'), (small_ship, 3, 'one-masted ship')]
     for kind in kinds_and_numbers:
@@ -184,12 +181,15 @@ def hit_or_miss(placement_board, displayed_board, user_input):
                         if user_input[1]+2 < len(placement_board):
                             displayed_board[user_input[0]][user_input[1]+2] = 'S'
                 print('Hit and sunk!')
+                input()
             else:
                 displayed_board[user_input[0]][user_input[1]] = 'H'
                 print('Hit')
+                input()
     else:
         displayed_board[user_input[0]][user_input[1]] = 'M'
         print('Missed')
+        input()
     return displayed_board
 def change_placement_board(placement_board, user_input):
     if move_is_succesfull(placement_board, user_input):
@@ -235,12 +235,12 @@ def game(placement_boards, display_boards, names):
     winning_player = None
     while winning_player == None:
         if player == 0:
-            print(f'{names[0]}\'s turn')
+            print(f'\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n{names[0]}\'s turn')
             input()
             turn(display_boards[0], display_boards[1], placement_boards[1])
             player = 1
         else:
-            print(f'{names[1]}\'s turn')
+            print(f'\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n{names[1]}\'s turn')
             input()
             turn(display_boards[1], display_boards[0], placement_boards[0])
             player = 0
@@ -251,7 +251,7 @@ def settings():
     display_boards = []
     names = []
     for number in range(2):
-        print(f'Player {number} of 2')
+        print(f'\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPlayer {number+1} of 2')
         input()
         name = player_name_input()
         names.append(name)
@@ -264,7 +264,7 @@ def settings():
     return setting_list
 def menu(game_settings):
     while True:
-        menu_input = input('[1] Play\n[2] Change settings\n[3] Quit\n')
+        menu_input = input('\n[1] Play\n[2] Change settings\n[3] Quit\n')
         match menu_input:
             case '1':
                 game(game_settings[0], game_settings[1], game_settings[2])
