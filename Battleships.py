@@ -1,3 +1,6 @@
+import os 
+
+clear = lambda : os.system('cls')
 columns = [('1', 0), ('2', 1), ('3', 2), ('4', 3), ('5', 4)]
 rows = [('A', 0), ('B', 1), ('C', 2), ('D', 3),('E', 4)]
 big_ship = ['X', 'X', 'X']
@@ -234,13 +237,14 @@ def game(placement_boards, display_boards, names):
     player = 0
     winning_player = None
     while winning_player == None:
+        clear()
         if player == 0:
-            print(f'\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n{names[0]}\'s turn')
+            print(f'{names[0]}\'s turn')
             input()
             turn(display_boards[0], display_boards[1], placement_boards[1])
             player = 1
         else:
-            print(f'\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n{names[1]}\'s turn')
+            print(f'{names[1]}\'s turn')
             input()
             turn(display_boards[1], display_boards[0], placement_boards[0])
             player = 0
@@ -251,7 +255,8 @@ def settings():
     display_boards = []
     names = []
     for number in range(2):
-        print(f'\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPlayer {number+1} of 2')
+        clear()
+        print(f'Player {number+1} of 2')
         input()
         name = player_name_input()
         names.append(name)
